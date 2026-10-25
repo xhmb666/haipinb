@@ -397,12 +397,16 @@ function initAdminAuth() {
     doLogin(pwdInput.value);
   });
 
-  // 一键登录链接（带参数跳转到当前页）
+  // 一键登录按钮
   const quickLogin = document.getElementById("quickLogin");
   if (quickLogin) {
     quickLogin.addEventListener("click", (e) => {
       e.preventDefault();
-      doLogin(ADMIN_PASSWORD);
+      e.stopPropagation();
+      const ok = doLogin(ADMIN_PASSWORD);
+      if (!ok) {
+        loginError.textContent = "登录失败，请刷新页面重试";
+      }
     });
   }
 
@@ -410,7 +414,8 @@ function initAdminAuth() {
     logoutBtn.addEventListener("click", (e) => {
       e.preventDefault();
       sessionStorage.removeItem(AUTH_KEY);
-      location.reload();
+      // 直接跳转回无参数的登录页，彻底清除状态
+      location.href = location.pathname;
     });
   }
 }
