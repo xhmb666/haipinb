@@ -11,24 +11,24 @@
 }
 
 :root {
-  /* 毛玻璃设计令牌 */
-  --glass-surface: rgba(255, 255, 255, 0.22);
-  --glass-surface-strong: rgba(255, 255, 255, 0.38);
-  --glass-border: rgba(255, 255, 255, 0.45);
-  --glass-blur: 18px;
-  --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
+  /* 毛玻璃设计令牌（深色高级版） */
+  --glass-surface: rgba(255, 255, 255, 0.08);
+  --glass-surface-strong: rgba(255, 255, 255, 0.14);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-blur: 20px;
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 
-  /* 文字（在浅玻璃上用深色保证可读） */
-  --text: #1a1a2e;
-  --text-secondary: #555566;
-  --text-on-glass: #2a2a3e;
+  /* 文字（深色背景上用浅色） */
+  --text: #f0f0f5;
+  --text-secondary: #a0a0b8;
+  --text-on-glass: #ffffff;
 
   /* 主题色 */
-  --primary: #4a7dff;
-  --primary-light: rgba(74, 125, 255, 0.18);
-  --success: #34c759;
-  --danger: #ff3b30;
-  --radius: 18px;
+  --primary: #818cf8;
+  --primary-light: rgba(129, 140, 248, 0.2);
+  --success: #34d399;
+  --danger: #f87171;
+  --radius: 20px;
 }
 
 html,
@@ -44,26 +44,98 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 
-  /* 彩色动态渐变背景 */
-  background: linear-gradient(-45deg, #ff6b9d, #c06bff, #6b8dff, #4ad1ff, #4ad1a3);
+  /* 深色高级渐变底色 */
+  background: linear-gradient(135deg, #0f0c29, #1a1a3e, #24243e, #1a1a3e, #0f0c29);
   background-size: 400% 400%;
-  animation: gradientShift 18s ease infinite;
+  animation: gradientShift 20s ease infinite;
+}
+
+/* 动态光斑 */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body::before {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #6366f1, transparent 70%);
+  top: -150px;
+  left: -100px;
+  animation: float1 18s ease-in-out infinite;
+}
+
+body::after {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #ec4899, transparent 70%);
+  bottom: -200px;
+  right: -150px;
+  animation: float2 22s ease-in-out infinite;
+}
+
+/* 第三个光斑，增加层次 */
+.bg-orb {
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(circle, #06b6d4, transparent 70%);
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: float3 25s ease-in-out infinite;
 }
 
 @keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(100px, 80px) scale(1.2); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-80px, -100px) scale(1.15); }
+}
+
+@keyframes float3 {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-30%, -70%) scale(1.3); }
+}
+
+/* 粒子画布背景 */
+.bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 内容层高于背景 */
+.topbar, .container, .login-wrap {
+  position: relative;
+  z-index: 1;
 }
 
 a {
-  color: #2d5bdb;
+  color: #a5b4fc;
   text-decoration: none;
 }
 
@@ -309,15 +381,15 @@ a {
 }
 
 .feedback-btn.support.active {
-  background: rgba(52, 199, 89, 0.25);
+  background: rgba(52, 211, 153, 0.2);
   border-color: var(--success);
-  color: #1a7a35;
+  color: #6ee7b7;
 }
 
 .feedback-btn.oppose.active {
-  background: rgba(255, 59, 48, 0.25);
+  background: rgba(248, 113, 113, 0.2);
   border-color: var(--danger);
-  color: #b02a22;
+  color: #fca5a5;
 }
 
 /* 支持率进度条 */
@@ -412,7 +484,7 @@ a {
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-  color: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .form-group input:focus,
@@ -534,14 +606,48 @@ a {
   width: 100%;
   max-width: 360px;
   background: var(--glass-surface);
-  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
   border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border-radius: var(--radius);
-  padding: 28px 22px 22px;
+  padding: 32px 24px 24px;
   position: relative;
   z-index: 2;
+  animation: cardFloat 6s ease-in-out infinite;
+}
+
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* 验证码区域 */
+.captcha-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.captcha-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.captcha-canvas {
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.captcha-tip {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 6px;
 }
 
 .login-card .logo-badge {

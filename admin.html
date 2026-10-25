@@ -17,7 +17,14 @@
         <div class="form-group">
           <input type="password" name="password" placeholder="请输入密码" autocomplete="off" required />
         </div>
-        <div class="checkbox-row" style="justify-content:center;margin-bottom:12px;">
+        <div class="captcha-row">
+          <div class="form-group">
+            <input type="text" name="captcha" placeholder="验证码" autocomplete="off" maxlength="4" required />
+          </div>
+          <canvas id="captchaCanvas" class="captcha-canvas" width="120" height="48" title="点击刷新"></canvas>
+        </div>
+        <p class="captcha-tip">看不清？点击图片刷新</p>
+        <div class="checkbox-row" style="justify-content:center;margin:10px 0;">
           <input type="checkbox" id="togglePwd" />
           <label for="togglePwd" style="color:rgba(255,255,255,0.9);font-size:13px;">显示密码</label>
         </div>
@@ -93,6 +100,7 @@
 
   <script src="app.js"></script>
   <script>
+    initParticleBackground();
     initAdminAuth();
   </script>
 </body>

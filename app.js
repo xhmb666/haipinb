@@ -6,6 +6,152 @@
 const STORAGE_KEY = "sw_announcements";
 const FEEDBACK_KEY = "sw_feedback_votes"; // 记录本设备已投票的公告
 
+/* ---------- 粒子网格背景 ---------- */
+function initParticleBackground() {
+  // 插入画布和第三光斑
+  const canvas = document.createElement("canvas");
+  canvas.className = "bg-canvas";
+  const orb = document.createElement("div");
+  orb.className = "bg-orb";
+  document.body.prepend(orb, canvas);
+
+  const ctx = canvas.getContext("2d");
+  let particles = [];
+  let w, h;
+  const mouse = { x: -9999, y: -9999 };
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  // 粒子数量根据屏幕大小
+  const count = Math.min(80, Math.floor((w * h) / 18000));
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      r: Math.random() * 2 + 1,
+    });
+  }
+
+  document.addEventListener("mousemove", (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+  document.addEventListener("mouseleave", () => {
+    mouse.x = -9999;
+    mouse.y = -9999;
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+
+    // 连线
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.strokeStyle = `rgba(129, 140, 248, ${0.15 * (1 - dist / 120)})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+      // 鼠标连线
+      const mdx = particles[i].x - mouse.x;
+      const mdy = particles[i].y - mouse.y;
+      const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+      if (mdist < 150) {
+        ctx.strokeStyle = `rgba(236, 72, 153, ${0.3 * (1 - mdist / 150)})`;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.stroke();
+      }
+    }
+
+    // 粒子
+    for (const p of particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > w) p.vx *= -1;
+      if (p.y < 0 || p.y > h) p.vy *= -1;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ---------- 图形验证码 ---------- */
+let currentCaptcha = "";
+
+function generateCaptcha(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 4; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  currentCaptcha = code;
+
+  const w = canvas.width;
+  const h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  // 背景
+  ctx.fillStyle = "rgba(15, 12, 41, 0.6)";
+  ctx.fillRect(0, 0, w, h);
+
+  // 干扰线
+  for (let i = 0; i < 5; i++) {
+    ctx.strokeStyle = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`;
+    ctx.beginPath();
+    ctx.moveTo(Math.random() * w, Math.random() * h);
+    ctx.lineTo(Math.random() * w, Math.random() * h);
+    ctx.stroke();
+  }
+
+  // 干扰点
+  for (let i = 0; i < 30; i++) {
+    ctx.fillStyle = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.6)`;
+    ctx.beginPath();
+    ctx.arc(Math.random() * w, Math.random() * h, 1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 文字
+  for (let i = 0; i < code.length; i++) {
+    ctx.font = `bold ${20 + Math.random() * 6}px Arial`;
+    ctx.fillStyle = `hsl(${Math.random() * 360}, 80%, 70%)`;
+    ctx.save();
+    const x = 18 + i * 26;
+    const y = 30 + Math.random() * 8;
+    ctx.translate(x, y);
+    ctx.rotate((Math.random() - 0.5) * 0.5);
+    ctx.fillText(code[i], 0, 0);
+    ctx.restore();
+  }
+}
+
+function verifyCaptcha(input) {
+  return input.trim().toUpperCase() === currentCaptcha;
+}
+
 /* ---------- 数据层 ---------- */
 
 // 读取全部公告
@@ -358,7 +504,15 @@ function initAdminAuth() {
 
   // 方式二：表单登录
   const pwdInput = loginForm.password;
+  const captchaInput = loginForm.captcha;
   const loginCard = document.querySelector(".login-card");
+
+  // 生成验证码
+  const captchaCanvas = document.getElementById("captchaCanvas");
+  if (captchaCanvas) {
+    generateCaptcha("captchaCanvas");
+    captchaCanvas.addEventListener("click", () => generateCaptcha("captchaCanvas"));
+  }
 
   // 显示/隐藏密码
   const togglePwd = document.getElementById("togglePwd");
@@ -378,7 +532,15 @@ function initAdminAuth() {
     }, 350);
   });
 
-  function doLogin(rawPwd) {
+  function doLogin(rawPwd, rawCaptcha) {
+    // 校验验证码
+    if (captchaInput && !verifyCaptcha(rawCaptcha || "")) {
+      loginError.textContent = "验证码错误";
+      if (captchaCanvas) generateCaptcha("captchaCanvas");
+      captchaInput.value = "";
+      captchaInput.focus();
+      return false;
+    }
     const pwd = (rawPwd || "").trim().toLowerCase();
     if (pwd === ADMIN_PASSWORD) {
       sessionStorage.setItem(AUTH_KEY, "1");
@@ -388,13 +550,15 @@ function initAdminAuth() {
     }
     loginError.textContent = "密码错误，请重试";
     pwdInput.value = "";
+    if (captchaCanvas) generateCaptcha("captchaCanvas");
+    captchaInput.value = "";
     pwdInput.focus();
     return false;
   }
 
   loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    doLogin(pwdInput.value);
+    doLogin(pwdInput.value, captchaInput ? captchaInput.value : "");
   });
 
   // 一键登录：直接写入认证状态并刷新，最可靠
