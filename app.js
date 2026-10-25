@@ -406,6 +406,11 @@ function renderAdminList() {
 
   container.innerHTML = list
     .map((a) => {
+      const sup = a.supports || 0;
+      const opp = a.opposes || 0;
+      const total = sup + opp;
+      const supRate = total > 0 ? ((sup / total) * 100).toFixed(1) : "0.0";
+      const oppRate = total > 0 ? ((opp / total) * 100).toFixed(1) : "0.0";
       return `
       <div class="admin-list-item">
         <div class="admin-list-info">
@@ -414,8 +419,18 @@ function renderAdminList() {
             ${escapeHtml(a.title)}
           </div>
           <div class="admin-list-meta">
-            ${escapeHtml(a.source)} · ${escapeHtml(a.date)} · 👍 ${a.supports || 0} / 👎 ${a.opposes || 0}
+            ${escapeHtml(a.source)} · ${escapeHtml(a.date)}
           </div>
+          <div class="admin-rate">
+            <span class="rate-box support">👍 支持 ${sup} <em>${supRate}%</em></span>
+            <span class="rate-box oppose">👎 反对 ${opp} <em>${oppRate}%</em></span>
+            <span class="rate-total">共 ${total} 票</span>
+          </div>
+          ${
+            total > 0
+              ? `<div class="rate-bar"><div class="rate-fill" style="width:${supRate}%"></div></div>`
+              : ""
+          }
         </div>
         <button class="btn btn-danger" data-delete="${a.id}">删除</button>
       </div>`;

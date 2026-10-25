@@ -577,6 +577,62 @@ a {
 .admin-list-meta {
   font-size: 12px;
   color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+/* 支持率/反对率 */
+.admin-rate {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.rate-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-surface-strong);
+}
+
+.rate-box.support {
+  color: #6ee7b7;
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+.rate-box.oppose {
+  color: #fca5a5;
+  border-color: rgba(248, 113, 113, 0.4);
+}
+
+.rate-box em {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.rate-total {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.rate-bar {
+  height: 5px;
+  background: rgba(248, 113, 113, 0.3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.rate-fill {
+  height: 100%;
+  background: var(--success);
+  border-radius: 999px;
+  transition: width 0.3s ease;
 }
 
 .tag-pill {
