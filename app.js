@@ -232,6 +232,16 @@ function deleteAnnouncement(id) {
   saveAnnouncements(list);
 }
 
+// 管理员直接修改支持/反对票数
+function updateAnnouncementVotes(id, supports, opposes) {
+  const list = getAnnouncements();
+  const item = list.find((a) => a.id === id);
+  if (!item) return;
+  item.supports = Math.max(0, supports);
+  item.opposes = Math.max(0, opposes);
+  saveAnnouncements(list);
+}
+
 // 投票反馈
 function vote(id, type) {
   const list = getAnnouncements();
@@ -431,8 +441,25 @@ function renderAdminList() {
               ? `<div class="rate-bar"><div class="rate-fill" style="width:${supRate}%"></div></div>`
               : ""
           }
+          <div class="vote-edit" data-vote-edit="${a.id}" hidden>
+            <div class="vote-edit-row">
+              <label>👍 支持</label>
+              <input type="number" min="0" value="${sup}" data-sup-input="${a.id}" />
+            </div>
+            <div class="vote-edit-row">
+              <label>👎 反对</label>
+              <input type="number" min="0" value="${opp}" data-opp-input="${a.id}" />
+            </div>
+            <div class="vote-edit-actions">
+              <button class="btn btn-primary" data-save-vote="${a.id}">保存</button>
+              <button class="btn" data-cancel-vote="${a.id}">取消</button>
+            </div>
+          </div>
         </div>
-        <button class="btn btn-danger" data-delete="${a.id}">删除</button>
+        <div class="admin-list-actions">
+          <button class="btn btn-edit" data-edit-vote="${a.id}">改票</button>
+          <button class="btn btn-danger" data-delete="${a.id}">删除</button>
+        </div>
       </div>`;
     })
     .join("");
@@ -445,6 +472,39 @@ function renderAdminList() {
         renderAdminList();
         showToast("已删除");
       }
+    });
+  });
+
+  // 改票 - 显示编辑区
+  container.querySelectorAll("[data-edit-vote]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.editVote;
+      const editBox = container.querySelector(`[data-vote-edit="${id}"]`);
+      if (editBox) editBox.hidden = !editBox.hidden;
+    });
+  });
+
+  // 改票 - 取消
+  container.querySelectorAll("[data-cancel-vote]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.cancelVote;
+      const editBox = container.querySelector(`[data-vote-edit="${id}"]`);
+      if (editBox) editBox.hidden = true;
+    });
+  });
+
+  // 改票 - 保存
+  container.querySelectorAll("[data-save-vote]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.saveVote;
+      const supInput = container.querySelector(`[data-sup-input="${id}"]`);
+      const oppInput = container.querySelector(`[data-opp-input="${id}"]`);
+      if (!supInput || !oppInput) return;
+      const sup = Math.max(0, parseInt(supInput.value, 10) || 0);
+      const opp = Math.max(0, parseInt(oppInput.value, 10) || 0);
+      updateAnnouncementVotes(id, sup, opp);
+      renderAdminList();
+      showToast("票数已更新");
     });
   });
 }

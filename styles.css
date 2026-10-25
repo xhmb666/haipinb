@@ -635,6 +635,63 @@ a {
   transition: width 0.3s ease;
 }
 
+/* 改票编辑区 */
+.admin-list-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.vote-edit {
+  margin-top: 10px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+
+.vote-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.vote-edit-row label {
+  font-size: 13px;
+  color: var(--text-on-glass);
+  min-width: 56px;
+}
+
+.vote-edit-row input {
+  flex: 1;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-on-glass);
+  font-size: 14px;
+  outline: none;
+}
+
+.vote-edit-row input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.vote-edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+}
+
 .tag-pill {
   display: inline-block;
   font-size: 11px;
