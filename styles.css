@@ -5,6 +5,11 @@
   box-sizing: border-box;
 }
 
+/* 确保 hidden 属性生效，不被 display:flex 等覆盖 */
+[hidden] {
+  display: none !important;
+}
+
 :root {
   /* 毛玻璃设计令牌 */
   --glass-surface: rgba(255, 255, 255, 0.22);
