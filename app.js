@@ -336,8 +336,19 @@ function initAdminAuth() {
   function showAdmin() {
     loginView.hidden = true;
     adminView.hidden = false;
+    // 清理 URL 上的 auth 参数，避免刷新时重复处理
+    history.replaceState(null, "", location.pathname + location.hash);
     bindAdminForm();
     renderAdminPage();
+  }
+
+  // 方式一：网址参数一键登录  admin.html?auth=hpnb666
+  const urlParams = new URLSearchParams(location.search);
+  const urlAuth = urlParams.get("auth");
+  if (urlAuth && urlAuth.trim().toLowerCase() === ADMIN_PASSWORD) {
+    sessionStorage.setItem(AUTH_KEY, "1");
+    showAdmin();
+    return;
   }
 
   if (isAuthed()) {
@@ -345,33 +356,55 @@ function initAdminAuth() {
     return;
   }
 
-  // 移动端：输入框聚焦时滚动整个登录卡到可见区域，确保按钮不被键盘遮挡
+  // 方式二：表单登录
   const pwdInput = loginForm.password;
   const loginCard = document.querySelector(".login-card");
+
+  // 显示/隐藏密码
+  const togglePwd = document.getElementById("togglePwd");
+  if (togglePwd) {
+    togglePwd.addEventListener("change", () => {
+      pwdInput.type = togglePwd.checked ? "text" : "password";
+    });
+  }
+
+  // 输入框聚焦时滚动整个登录卡到可见区域
   pwdInput.addEventListener("focus", () => {
     setTimeout(() => {
       if (loginCard) {
         loginCard.scrollIntoView({ behavior: "smooth", block: "start" });
-      } else {
-        pwdInput.scrollIntoView({ behavior: "smooth", block: "center" });
       }
       window.scrollTo({ top: Math.max(0, window.scrollY - 20), behavior: "smooth" });
     }, 350);
   });
 
-  loginForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const pwd = pwdInput.value.trim();
+  function doLogin(rawPwd) {
+    const pwd = (rawPwd || "").trim().toLowerCase();
     if (pwd === ADMIN_PASSWORD) {
       sessionStorage.setItem(AUTH_KEY, "1");
       loginError.textContent = "";
       showAdmin();
-    } else {
-      loginError.textContent = "密码错误，请重试";
-      pwdInput.value = "";
-      pwdInput.focus();
+      return true;
     }
+    loginError.textContent = "密码错误，请重试";
+    pwdInput.value = "";
+    pwdInput.focus();
+    return false;
+  }
+
+  loginForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    doLogin(pwdInput.value);
   });
+
+  // 一键登录链接（带参数跳转到当前页）
+  const quickLogin = document.getElementById("quickLogin");
+  if (quickLogin) {
+    quickLogin.addEventListener("click", (e) => {
+      e.preventDefault();
+      doLogin(ADMIN_PASSWORD);
+    });
+  }
 
   if (logoutBtn) {
     logoutBtn.addEventListener("click", (e) => {

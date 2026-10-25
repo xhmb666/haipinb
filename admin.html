@@ -17,9 +17,16 @@
         <div class="form-group">
           <input type="password" name="password" placeholder="请输入密码" autocomplete="off" required />
         </div>
+        <div class="checkbox-row" style="justify-content:center;margin-bottom:12px;">
+          <input type="checkbox" id="togglePwd" />
+          <label for="togglePwd" style="color:rgba(255,255,255,0.9);font-size:13px;">显示密码</label>
+        </div>
         <button type="submit" class="btn btn-primary">进入后台</button>
         <div class="login-error" id="loginError"></div>
       </form>
+      <div style="text-align:center;margin-top:16px;">
+        <a href="#" id="quickLogin" style="color:rgba(255,255,255,0.85);font-size:14px;text-decoration:underline;">🔑 一键登录（免输密码）</a>
+      </div>
       <p style="margin-top:20px;">
         <a href="index.html" style="color:rgba(255,255,255,0.85);">← 返回公告页</a>
       </p>
