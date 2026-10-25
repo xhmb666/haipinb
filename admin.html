@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>后台管理 · 公告中心</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 登录界面（未鉴权时显示） -->
+  <div id="loginView" class="login-wrap">
+    <div class="login-card">
+      <div class="logo-badge">S</div>
+      <h1>后台管理</h1>
+      <p>请输入管理密码以继续</p>
+      <form id="loginForm">
+        <div class="form-group">
+          <input type="password" name="password" placeholder="请输入密码" autocomplete="off" required />
+        </div>
+        <button type="submit" class="btn btn-primary">进入后台</button>
+        <div class="login-error" id="loginError"></div>
+      </form>
+      <p style="margin-top:20px;">
+        <a href="index.html" style="color:rgba(255,255,255,0.85);">← 返回公告页</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- 后台主体（鉴权后显示） -->
+  <div id="adminView" hidden>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a href="index.html" class="menu-btn" aria-label="返回">←</a>
+        <div class="logo-badge">S</div>
+        <a href="#" class="menu-btn" id="logoutBtn" aria-label="退出" title="退出登录">⏻</a>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="admin-header">
+        <h1>后台管理</h1>
+        <a href="index.html" class="back-link">← 返回公告页</a>
+      </div>
+
+      <!-- 发布公告 -->
+      <section class="admin-card">
+        <h2>发布新公告</h2>
+        <form id="announcementForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>标题</label>
+              <input type="text" name="title" placeholder="例如：至 sw 全体用户" required />
+            </div>
+            <div class="form-group">
+              <label>来源</label>
+              <input type="text" name="source" placeholder="发布人名称" value="管理员" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>内容</label>
+            <textarea name="content" placeholder="输入公告内容，支持换行和链接..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-row">
+              <input type="checkbox" name="pinned" />
+              置顶显示
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary">发布公告</button>
+        </form>
+      </section>
+
+      <!-- 公告列表 -->
+      <section class="admin-card">
+        <h2>公告列表</h2>
+        <div id="adminList"></div>
+        <div class="empty" id="adminEmpty" hidden>
+          <div class="empty-icon">📭</div>
+          <p>暂无公告</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+  <script>
+    initAdminAuth();
+  </script>
+</body>
+</html>

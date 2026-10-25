@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>公告中心</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 顶部栏 -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="menu-btn" aria-label="菜单">☰</button>
+      <div class="logo-badge">S</div>
+      <div class="topbar-spacer"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 统计卡片 -->
+    <section class="stats-card">
+      <div class="stats-header">
+        <div class="stats-icon">📢</div>
+        <div>
+          <div class="stats-title">站内通知</div>
+          <div class="stats-main">公告中心</div>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value" id="statCount">0</div>
+          <div class="stat-label">公告数量</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="statSupport">0</div>
+          <div class="stat-label">支持反馈</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="statOppose">0</div>
+          <div class="stat-label">反对反馈</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 公告列表 -->
+    <section id="announcementList"></section>
+
+    <!-- 空状态 -->
+    <div class="empty" id="emptyState" hidden>
+      <div class="empty-icon">📭</div>
+      <p>暂无公告</p>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // 渲染公告展示页
+    renderPublicPage();
+  </script>
+</body>
+</html>
