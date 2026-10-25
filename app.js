@@ -397,25 +397,25 @@ function initAdminAuth() {
     doLogin(pwdInput.value);
   });
 
-  // 一键登录按钮
+  // 一键登录：直接写入认证状态并刷新，最可靠
   const quickLogin = document.getElementById("quickLogin");
   if (quickLogin) {
     quickLogin.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const ok = doLogin(ADMIN_PASSWORD);
-      if (!ok) {
-        loginError.textContent = "登录失败，请刷新页面重试";
-      }
+      sessionStorage.setItem(AUTH_KEY, "1");
+      location.reload();
     });
   }
 
   if (logoutBtn) {
     logoutBtn.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation();
       sessionStorage.removeItem(AUTH_KEY);
-      // 直接跳转回无参数的登录页，彻底清除状态
-      location.href = location.pathname;
+      sessionStorage.clear();
+      // 跳转到无参数的后台地址
+      location.replace("admin.html");
     });
   }
 }
